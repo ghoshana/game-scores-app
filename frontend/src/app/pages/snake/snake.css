@@ -1,0 +1,97 @@
+.snake-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.score {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.board-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  max-width: 100%;
+}
+
+canvas {
+  display: block;
+  width: 400px;
+  height: 400px;
+  max-width: 100%;
+  border: 3px solid #444;
+  background: #111;
+  box-sizing: border-box;
+}
+
+.game-over-overlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgb(0 0 0 / 65%);
+}
+
+.game-over-box {
+  min-width: 220px;
+  padding: 24px;
+
+  text-align: center;
+  color: white;
+
+  background: #1e1e1e;
+  border: 2px solid #777;
+  border-radius: 12px;
+}
+
+.game-over-box h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 2rem;
+}
+
+.game-over-box p {
+  margin-bottom: 18px;
+  font-size: 1.2rem;
+}
+
+button {
+  padding: 11px 24px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: #43a047;
+  color: white;
+
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #388e3c;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.instructions {
+  margin: 0;
+  color: #555;
+  font-size: 1.1rem;
+}
