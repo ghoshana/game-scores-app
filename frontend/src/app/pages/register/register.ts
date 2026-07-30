@@ -17,7 +17,7 @@ export class Register {
   constructor(private http: HttpClient, private router: Router) {}
 
   onRegister() {
-    this.http.post('http://localhost:5000/api/auth/register', {
+    this.http.post('https://game-scores-app.onrender.com/api/auth/register', {
       username: this.username,
       password: this.password,
     }).subscribe({

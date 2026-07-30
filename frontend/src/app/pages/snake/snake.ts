@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 interface Position {
   x: number;
   y: number;
@@ -38,6 +40,8 @@ export class Snake implements AfterViewInit, OnDestroy {
   private readonly gridSize = 20;
   private readonly cellCount = 20;
   private readonly gameSpeed = 220;
+  private readonly scoreApiUrl =
+    'https://game-scores-app.onrender.com/api/scores';
 
   private snake: Position[] = [];
   private food: Position = { x: 15, y: 10 };
@@ -48,22 +52,36 @@ export class Snake implements AfterViewInit, OnDestroy {
   private gameLoop?: ReturnType<typeof setInterval>;
   private animationFrame?: number;
 
+  private scoreSaved = false;
+
   score = 0;
   gameOver = false;
   isExploding = false;
+  savingScore = false;
+  scoreSaveError = '';
 
-  constructor(private changeDetector: ChangeDetectorRef) {}
+  constructor(
+    private changeDetector: ChangeDetectorRef,
+    private http: HttpClient
+  ) {}
 
   ngAfterViewInit(): void {
-    const context = this.board.nativeElement.getContext('2d');
+    const context =
+      this.board.nativeElement.getContext('2d');
 
     if (!context) {
-      throw new Error('Unable to create canvas context.');
+      throw new Error(
+        'Unable to create canvas context.'
+      );
     }
 
     this.ctx = context;
 
-    document.addEventListener('keydown', this.handleKey);
+    document.addEventListener(
+      'keydown',
+      this.handleKey
+    );
+
     this.start();
   }
 
@@ -72,12 +90,18 @@ export class Snake implements AfterViewInit, OnDestroy {
 
     if (this.animationFrame !== undefined) {
       cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = undefined;
     }
 
-    document.removeEventListener('keydown', this.handleKey);
+    document.removeEventListener(
+      'keydown',
+      this.handleKey
+    );
   }
 
-  private handleKey = (event: KeyboardEvent): void => {
+  private handleKey = (
+    event: KeyboardEvent
+  ): void => {
     const arrowKeys = [
       'ArrowUp',
       'ArrowDown',
@@ -98,25 +122,37 @@ export class Snake implements AfterViewInit, OnDestroy {
     switch (event.key) {
       case 'ArrowUp':
         if (this.direction.y === 0) {
-          this.nextDirection = { x: 0, y: -1 };
+          this.nextDirection = {
+            x: 0,
+            y: -1,
+          };
         }
         break;
 
       case 'ArrowDown':
         if (this.direction.y === 0) {
-          this.nextDirection = { x: 0, y: 1 };
+          this.nextDirection = {
+            x: 0,
+            y: 1,
+          };
         }
         break;
 
       case 'ArrowLeft':
         if (this.direction.x === 0) {
-          this.nextDirection = { x: -1, y: 0 };
+          this.nextDirection = {
+            x: -1,
+            y: 0,
+          };
         }
         break;
 
       case 'ArrowRight':
         if (this.direction.x === 0) {
-          this.nextDirection = { x: 1, y: 0 };
+          this.nextDirection = {
+            x: 1,
+            y: 0,
+          };
         }
         break;
     }
@@ -138,11 +174,13 @@ export class Snake implements AfterViewInit, OnDestroy {
     this.score = 0;
     this.gameOver = false;
     this.isExploding = false;
+    this.savingScore = false;
+    this.scoreSaveError = '';
+    this.scoreSaved = false;
 
     this.generateFood();
     this.draw();
 
-    // Force Angular to display the reset score.
     this.changeDetector.detectChanges();
 
     this.gameLoop = setInterval(() => {
@@ -155,7 +193,9 @@ export class Snake implements AfterViewInit, OnDestroy {
   }
 
   private tick(): void {
-    this.direction = { ...this.nextDirection };
+    this.direction = {
+      ...this.nextDirection,
+    };
 
     const currentHead = this.snake[0];
 
@@ -164,7 +204,10 @@ export class Snake implements AfterViewInit, OnDestroy {
       y: currentHead.y + this.direction.y,
     };
 
-    if (this.hasHitWall(newHead) || this.hasHitSnake(newHead)) {
+    if (
+      this.hasHitWall(newHead) ||
+      this.hasHitSnake(newHead)
+    ) {
       this.stopGame();
       this.playExplosion(currentHead);
       return;
@@ -175,8 +218,6 @@ export class Snake implements AfterViewInit, OnDestroy {
     if (this.isEatingFood(newHead)) {
       this.score += 10;
       this.generateFood();
-
-      // Refresh Score: {{ score }} immediately.
       this.changeDetector.detectChanges();
     } else {
       this.snake.pop();
@@ -185,7 +226,9 @@ export class Snake implements AfterViewInit, OnDestroy {
     this.draw();
   }
 
-  private hasHitWall(head: Position): boolean {
+  private hasHitWall(
+    head: Position
+  ): boolean {
     return (
       head.x < 0 ||
       head.x >= this.cellCount ||
@@ -194,11 +237,9 @@ export class Snake implements AfterViewInit, OnDestroy {
     );
   }
 
-  private hasHitSnake(head: Position): boolean {
-    /*
-     * The final tail segment is ignored because it normally moves away
-     * during the same tick.
-     */
+  private hasHitSnake(
+    head: Position
+  ): boolean {
     return this.snake
       .slice(0, -1)
       .some(
@@ -208,7 +249,9 @@ export class Snake implements AfterViewInit, OnDestroy {
       );
   }
 
-  private isEatingFood(head: Position): boolean {
+  private isEatingFood(
+    head: Position
+  ): boolean {
     return (
       head.x === this.food.x &&
       head.y === this.food.y
@@ -220,8 +263,12 @@ export class Snake implements AfterViewInit, OnDestroy {
 
     do {
       newFood = {
-        x: Math.floor(Math.random() * this.cellCount),
-        y: Math.floor(Math.random() * this.cellCount),
+        x: Math.floor(
+          Math.random() * this.cellCount
+        ),
+        y: Math.floor(
+          Math.random() * this.cellCount
+        ),
       };
     } while (
       this.snake.some(
@@ -248,20 +295,30 @@ export class Snake implements AfterViewInit, OnDestroy {
   }
 
   private drawBackground(): void {
-    const canvasSize = this.cellCount * this.gridSize;
+    const canvasSize =
+      this.cellCount * this.gridSize;
 
     this.ctx.fillStyle = '#111111';
-    this.ctx.fillRect(0, 0, canvasSize, canvasSize);
+
+    this.ctx.fillRect(
+      0,
+      0,
+      canvasSize,
+      canvasSize
+    );
   }
 
   private drawFood(): void {
     const centerX =
-      this.food.x * this.gridSize + this.gridSize / 2;
+      this.food.x * this.gridSize +
+      this.gridSize / 2;
 
     const centerY =
-      this.food.y * this.gridSize + this.gridSize / 2;
+      this.food.y * this.gridSize +
+      this.gridSize / 2;
 
     this.ctx.beginPath();
+
     this.ctx.arc(
       centerX,
       centerY,
@@ -272,50 +329,64 @@ export class Snake implements AfterViewInit, OnDestroy {
 
     this.ctx.fillStyle = '#ef3939';
     this.ctx.fill();
-
     this.ctx.closePath();
   }
 
   private drawSnake(): void {
-    this.snake.forEach((segment, index) => {
-      this.ctx.fillStyle =
-        index === 0 ? '#8bd18f' : '#42a94f';
+    this.snake.forEach(
+      (segment, index) => {
+        this.ctx.fillStyle =
+          index === 0
+            ? '#8bd18f'
+            : '#42a94f';
 
-      this.ctx.fillRect(
-        segment.x * this.gridSize,
-        segment.y * this.gridSize,
-        this.gridSize - 1,
-        this.gridSize - 1
-      );
-    });
+        this.ctx.fillRect(
+          segment.x * this.gridSize,
+          segment.y * this.gridSize,
+          this.gridSize - 1,
+          this.gridSize - 1
+        );
+      }
+    );
   }
 
-  private playExplosion(head: Position): void {
+  private playExplosion(
+    head: Position
+  ): void {
     this.isExploding = true;
     this.changeDetector.detectChanges();
 
     const explosionX =
-      head.x * this.gridSize + this.gridSize / 2;
+      head.x * this.gridSize +
+      this.gridSize / 2;
 
     const explosionY =
-      head.y * this.gridSize + this.gridSize / 2;
+      head.y * this.gridSize +
+      this.gridSize / 2;
 
-    const particles: Particle[] = Array.from(
-      { length: 35 },
-      () => {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 1 + Math.random() * 5;
+    const particles: Particle[] =
+      Array.from(
+        { length: 35 },
+        () => {
+          const angle =
+            Math.random() * Math.PI * 2;
 
-        return {
-          x: explosionX,
-          y: explosionY,
-          velocityX: Math.cos(angle) * speed,
-          velocityY: Math.sin(angle) * speed,
-          size: 2 + Math.random() * 6,
-          life: 1,
-        };
-      }
-    );
+          const speed =
+            1 + Math.random() * 5;
+
+          return {
+            x: explosionX,
+            y: explosionY,
+            velocityX:
+              Math.cos(angle) * speed,
+            velocityY:
+              Math.sin(angle) * speed,
+            size:
+              2 + Math.random() * 6,
+            life: 1,
+          };
+        }
+      );
 
     const animate = (): void => {
       this.draw();
@@ -338,12 +409,17 @@ export class Snake implements AfterViewInit, OnDestroy {
         particle.life -= 0.035;
 
         this.ctx.save();
-        this.ctx.globalAlpha = Math.max(particle.life, 0);
+
+        this.ctx.globalAlpha =
+          Math.max(particle.life, 0);
 
         this.ctx.fillStyle =
-          particle.life > 0.5 ? '#ffdc55' : '#ff5733';
+          particle.life > 0.5
+            ? '#ffdc55'
+            : '#ff5733';
 
         this.ctx.beginPath();
+
         this.ctx.arc(
           particle.x,
           particle.y,
@@ -351,23 +427,88 @@ export class Snake implements AfterViewInit, OnDestroy {
           0,
           Math.PI * 2
         );
-        this.ctx.fill();
 
+        this.ctx.fill();
         this.ctx.restore();
       }
 
       if (particlesAlive) {
-        this.animationFrame = requestAnimationFrame(animate);
+        this.animationFrame =
+          requestAnimationFrame(animate);
+
         return;
       }
 
+      this.animationFrame = undefined;
       this.isExploding = false;
       this.gameOver = true;
 
+      this.saveScore();
       this.draw();
       this.changeDetector.detectChanges();
     };
 
     animate();
+  }
+
+  private saveScore(): void {
+    if (this.scoreSaved || this.savingScore) {
+      return;
+    }
+
+    const token =
+      localStorage.getItem('token');
+
+    if (!token) {
+      this.scoreSaveError =
+        'You must be logged in to save the score.';
+
+      this.changeDetector.detectChanges();
+      return;
+    }
+
+    this.savingScore = true;
+    this.scoreSaveError = '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const body = {
+      game: 'snake',
+      score: this.score,
+    };
+
+    this.http
+      .post(this.scoreApiUrl, body, {
+        headers,
+      })
+      .subscribe({
+        next: () => {
+          this.scoreSaved = true;
+          this.savingScore = false;
+
+          console.log(
+            'Snake score saved successfully.'
+          );
+
+          this.changeDetector.detectChanges();
+        },
+
+        error: error => {
+          this.savingScore = false;
+
+          this.scoreSaveError =
+            error?.error?.message ||
+            'The score could not be saved.';
+
+          console.error(
+            'Error saving Snake score:',
+            error
+          );
+
+          this.changeDetector.detectChanges();
+        },
+      });
   }
 }

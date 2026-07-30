@@ -1,9 +1,25 @@
-<h1>Welcome — Home Page</h1>
-<p>
-  <a routerLink="/login">Login</a> |
-  <a routerLink="/register">Register</a>
-</p>
-<p>
-  <a routerLink="/snake">Play Snake</a> |
-  <a routerLink="/tetris">Play Tetris</a>
-</p>
+<div style="max-width:400px; margin:60px auto; font-family:sans-serif; text-align:center;">
+  <h1>Game Scores</h1>
+
+  @if (username) {
+    <p>Welcome back, <strong>{{ username }}</strong>!</p>
+
+    <div style="margin:20px 0; padding:16px; border:1px solid #ddd; border-radius:8px;">
+      <h3>Your Best Scores</h3>
+      <p>🐍 Snake: <strong>{{ scores.snake || 0 }}</strong></p>
+      <p>🧱 Tetris: <strong>{{ scores.tetris || 0 }}</strong></p>
+    </div>
+
+    <p>
+      <a routerLink="/snake">Play Snake</a> &nbsp;|&nbsp;
+      <a routerLink="/tetris">Play Tetris</a>
+    </p>
+    <p><a href="javascript:void(0)" (click)="logout()">Log out</a></p>
+  } @else {
+    <p>Please log in to play and save your best scores.</p>
+    <p>
+      <a routerLink="/login">Login</a> &nbsp;|&nbsp;
+      <a routerLink="/register">Register</a>
+    </p>
+  }
+</div>

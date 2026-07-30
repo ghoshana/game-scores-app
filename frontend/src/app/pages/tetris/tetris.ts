@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
 
 interface Tetromino {
   shape: number[][];
@@ -38,6 +40,7 @@ export class Tetris implements AfterViewInit, OnDestroy {
   private current!: Tetromino;
 
   private gameLoop?: ReturnType<typeof setInterval>;
+  private loop: any;
 
   score = 0;
   gameOver = false;
@@ -94,7 +97,7 @@ export class Tetris implements AfterViewInit, OnDestroy {
     ],
   ];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+ constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {}
 
   ngAfterViewInit(): void {
     const context = this.board.nativeElement.getContext('2d');
@@ -167,10 +170,11 @@ export class Tetris implements AfterViewInit, OnDestroy {
       )
     ) {
       this.gameOver = true;
-      this.stopGame();
-      this.draw();
+      this.saveScore();
+      clearInterval(this.loop);
       this.cdr.detectChanges();
     }
+    
   }
 
   private tick(): void {
@@ -511,5 +515,16 @@ export class Tetris implements AfterViewInit, OnDestroy {
       this.cellSize - 4,
       this.cellSize - 4
     );
+  }
+  private saveScore(): void {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    this.http.post('https://game-scores-app.onrender.com/api/scores',
+      { game: 'tetris', score: this.score },
+      { headers: { Authorization: `Bearer ${token}` } }
+    ).subscribe({
+      next: () => console.log('Tetris score saved successfully.'),
+      error: (err) => console.error('Error saving Tetris score:', err),
+    });
   }
 }

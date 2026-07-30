@@ -18,7 +18,7 @@ export class Login {
   constructor(private http: HttpClient, private router: Router) {}
 
   onLogin() {
-    this.http.post('http://localhost:5000/api/auth/login', {
+    this.http.post('https://game-scores-app.onrender.com/api/auth/login', {
       username: this.username,
       password: this.password,
     }).subscribe({

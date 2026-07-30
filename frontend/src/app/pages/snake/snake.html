@@ -1,48 +1,24 @@
 <section class="snake-container">
   <h1>Snake</h1>
 
-  <p class="score">
-    Score: {{ score }}
-  </p>
+  <p class="score">Score: {{ score }}</p>
 
   <div class="board-wrapper">
-    <canvas
-      #board
-      width="400"
-      height="400"
-      aria-label="Snake game board">
-    </canvas>
+    <canvas #board width="400" height="400" aria-label="Snake game board"></canvas>
 
-   @if (gameOver) {
-  <div class="game-over-overlay">
-    <div class="game-over-box">
-      <h2>Game Over</h2>
-
-      <p>
-        Final score:
-        <strong>{{ score }}</strong>
-      </p>
-
-      <div class="game-over-actions">
-        <button
-          type="button"
-          class="restart-button"
-          (click)="restart()">
-          Restart
-        </button>
-
-        <a
-          routerLink="/"
-          class="home-button">
-          Go to Home
-        </a>
+    @if (gameOver) {
+      <div class="game-over-overlay">
+        <div class="game-over-box">
+          <h2>Game Over</h2>
+          <p>Final score: <strong>{{ score }}</strong></p>
+          <div class="game-over-actions">
+            <button type="button" class="restart-button" (click)="restart()">Restart</button>
+            <a routerLink="/" class="home-button">Go to Home</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-}
+    }
   </div>
 
-  <p class="instructions">
-    Use the arrow keys to move the snake.
-  </p>
+  <p class="instructions">Use the arrow keys to move the snake.</p>
 </section>
