@@ -8,7 +8,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+} from '@angular/common/http';
 
 interface Position {
   x: number;
@@ -40,24 +43,39 @@ export class Snake implements AfterViewInit, OnDestroy {
   private readonly gridSize = 20;
   private readonly cellCount = 20;
   private readonly gameSpeed = 220;
+  private readonly swipeThreshold = 20;
+
   private readonly scoreApiUrl =
     'https://game-scores-app.onrender.com/api/scores';
 
   private snake: Position[] = [];
-  private food: Position = { x: 15, y: 10 };
+  private food: Position = {
+    x: 15,
+    y: 10,
+  };
 
-  private direction: Position = { x: 1, y: 0 };
-  private nextDirection: Position = { x: 1, y: 0 };
+  private direction: Position = {
+    x: 1,
+    y: 0,
+  };
+
+  private nextDirection: Position = {
+    x: 1,
+    y: 0,
+  };
 
   private gameLoop?: ReturnType<typeof setInterval>;
   private animationFrame?: number;
 
-  private scoreSaved = false;
+  private touchStartX = 0;
+  private touchStartY = 0;
 
   score = 0;
   gameOver = false;
   isExploding = false;
+
   savingScore = false;
+  scoreSaved = false;
   scoreSaveError = '';
 
   constructor(
@@ -71,7 +89,7 @@ export class Snake implements AfterViewInit, OnDestroy {
 
     if (!context) {
       throw new Error(
-        'Unable to create canvas context.'
+        'Unable to create the Snake canvas context.'
       );
     }
 
@@ -80,6 +98,25 @@ export class Snake implements AfterViewInit, OnDestroy {
     document.addEventListener(
       'keydown',
       this.handleKey
+    );
+
+    const canvas =
+      this.board.nativeElement;
+
+    canvas.addEventListener(
+      'touchstart',
+      this.handleTouchStart,
+      {
+        passive: true,
+      }
+    );
+
+    canvas.addEventListener(
+      'touchend',
+      this.handleTouchEnd,
+      {
+        passive: false,
+      }
     );
 
     this.start();
@@ -97,6 +134,80 @@ export class Snake implements AfterViewInit, OnDestroy {
       'keydown',
       this.handleKey
     );
+
+    const canvas =
+      this.board.nativeElement;
+
+    canvas.removeEventListener(
+      'touchstart',
+      this.handleTouchStart
+    );
+
+    canvas.removeEventListener(
+      'touchend',
+      this.handleTouchEnd
+    );
+  }
+
+  start(): void {
+    this.stopGame();
+
+    if (this.animationFrame !== undefined) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = undefined;
+    }
+
+    this.snake = [
+      {
+        x: 10,
+        y: 10,
+      },
+    ];
+
+    this.direction = {
+      x: 1,
+      y: 0,
+    };
+
+    this.nextDirection = {
+      x: 1,
+      y: 0,
+    };
+
+    this.score = 0;
+    this.gameOver = false;
+    this.isExploding = false;
+
+    this.savingScore = false;
+    this.scoreSaved = false;
+    this.scoreSaveError = '';
+
+    this.generateFood();
+    this.draw();
+
+    this.changeDetector.detectChanges();
+
+    this.gameLoop = setInterval(() => {
+      this.tick();
+    }, this.gameSpeed);
+  }
+
+  restart(): void {
+    this.start();
+  }
+
+  move(
+    x: number,
+    y: number
+  ): void {
+    if (
+      this.gameOver ||
+      this.isExploding
+    ) {
+      return;
+    }
+
+    this.setDirectionIfValid(x, y);
   }
 
   private handleKey = (
@@ -115,81 +226,129 @@ export class Snake implements AfterViewInit, OnDestroy {
 
     event.preventDefault();
 
-    if (this.gameOver || this.isExploding) {
+    if (
+      this.gameOver ||
+      this.isExploding
+    ) {
       return;
     }
 
     switch (event.key) {
       case 'ArrowUp':
-        if (this.direction.y === 0) {
-          this.nextDirection = {
-            x: 0,
-            y: -1,
-          };
-        }
+        this.setDirectionIfValid(0, -1);
         break;
 
       case 'ArrowDown':
-        if (this.direction.y === 0) {
-          this.nextDirection = {
-            x: 0,
-            y: 1,
-          };
-        }
+        this.setDirectionIfValid(0, 1);
         break;
 
       case 'ArrowLeft':
-        if (this.direction.x === 0) {
-          this.nextDirection = {
-            x: -1,
-            y: 0,
-          };
-        }
+        this.setDirectionIfValid(-1, 0);
         break;
 
       case 'ArrowRight':
-        if (this.direction.x === 0) {
-          this.nextDirection = {
-            x: 1,
-            y: 0,
-          };
-        }
+        this.setDirectionIfValid(1, 0);
         break;
     }
   };
 
-  start(): void {
-    this.stopGame();
+  private handleTouchStart = (
+    event: TouchEvent
+  ): void => {
+    const touch =
+      event.touches[0];
 
-    if (this.animationFrame !== undefined) {
-      cancelAnimationFrame(this.animationFrame);
-      this.animationFrame = undefined;
+    if (!touch) {
+      return;
     }
 
-    this.snake = [{ x: 10, y: 10 }];
+    this.touchStartX =
+      touch.clientX;
 
-    this.direction = { x: 1, y: 0 };
-    this.nextDirection = { x: 1, y: 0 };
+    this.touchStartY =
+      touch.clientY;
+  };
 
-    this.score = 0;
-    this.gameOver = false;
-    this.isExploding = false;
-    this.savingScore = false;
-    this.scoreSaveError = '';
-    this.scoreSaved = false;
+  private handleTouchEnd = (
+    event: TouchEvent
+  ): void => {
+    if (
+      this.gameOver ||
+      this.isExploding
+    ) {
+      return;
+    }
 
-    this.generateFood();
-    this.draw();
+    const touch =
+      event.changedTouches[0];
 
-    this.changeDetector.detectChanges();
+    if (!touch) {
+      return;
+    }
 
-    this.gameLoop = setInterval(() => {
-      this.tick();
-    }, this.gameSpeed);
-  }
+    const deltaX =
+      touch.clientX -
+      this.touchStartX;
 
-  restart(): void {
-    this.start();
+    const deltaY =
+      touch.clientY -
+      this.touchStartY;
+
+    const absDeltaX =
+      Math.abs(deltaX);
+
+    const absDeltaY =
+      Math.abs(deltaY);
+
+    if (
+      Math.max(
+        absDeltaX,
+        absDeltaY
+      ) < this.swipeThreshold
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (absDeltaX > absDeltaY) {
+      this.setDirectionIfValid(
+        deltaX > 0 ? 1 : -1,
+        0
+      );
+    } else {
+      this.setDirectionIfValid(
+        0,
+        deltaY > 0 ? 1 : -1
+      );
+    }
+  };
+
+  private setDirectionIfValid(
+    x: number,
+    y: number
+  ): void {
+    if (
+      x !== 0 &&
+      this.direction.x === 0
+    ) {
+      this.nextDirection = {
+        x,
+        y: 0,
+      };
+
+      return;
+    }
+
+    if (
+      y !== 0 &&
+      this.direction.y === 0
+    ) {
+      this.nextDirection = {
+        x: 0,
+        y,
+      };
+    }
   }
 
   private tick(): void {
@@ -197,11 +356,17 @@ export class Snake implements AfterViewInit, OnDestroy {
       ...this.nextDirection,
     };
 
-    const currentHead = this.snake[0];
+    const currentHead =
+      this.snake[0];
 
     const newHead: Position = {
-      x: currentHead.x + this.direction.x,
-      y: currentHead.y + this.direction.y,
+      x:
+        currentHead.x +
+        this.direction.x,
+
+      y:
+        currentHead.y +
+        this.direction.y,
     };
 
     if (
@@ -264,10 +429,13 @@ export class Snake implements AfterViewInit, OnDestroy {
     do {
       newFood = {
         x: Math.floor(
-          Math.random() * this.cellCount
+          Math.random() *
+          this.cellCount
         ),
+
         y: Math.floor(
-          Math.random() * this.cellCount
+          Math.random() *
+          this.cellCount
         ),
       };
     } while (
@@ -296,9 +464,11 @@ export class Snake implements AfterViewInit, OnDestroy {
 
   private drawBackground(): void {
     const canvasSize =
-      this.cellCount * this.gridSize;
+      this.cellCount *
+      this.gridSize;
 
-    this.ctx.fillStyle = '#111111';
+    this.ctx.fillStyle =
+      '#111111';
 
     this.ctx.fillRect(
       0,
@@ -310,11 +480,13 @@ export class Snake implements AfterViewInit, OnDestroy {
 
   private drawFood(): void {
     const centerX =
-      this.food.x * this.gridSize +
+      this.food.x *
+        this.gridSize +
       this.gridSize / 2;
 
     const centerY =
-      this.food.y * this.gridSize +
+      this.food.y *
+        this.gridSize +
       this.gridSize / 2;
 
     this.ctx.beginPath();
@@ -327,7 +499,9 @@ export class Snake implements AfterViewInit, OnDestroy {
       Math.PI * 2
     );
 
-    this.ctx.fillStyle = '#ef3939';
+    this.ctx.fillStyle =
+      '#ef3939';
+
     this.ctx.fill();
     this.ctx.closePath();
   }
@@ -341,8 +515,12 @@ export class Snake implements AfterViewInit, OnDestroy {
             : '#42a94f';
 
         this.ctx.fillRect(
-          segment.x * this.gridSize,
-          segment.y * this.gridSize,
+          segment.x *
+            this.gridSize,
+
+          segment.y *
+            this.gridSize,
+
           this.gridSize - 1,
           this.gridSize - 1
         );
@@ -357,32 +535,48 @@ export class Snake implements AfterViewInit, OnDestroy {
     this.changeDetector.detectChanges();
 
     const explosionX =
-      head.x * this.gridSize +
+      head.x *
+        this.gridSize +
       this.gridSize / 2;
 
     const explosionY =
-      head.y * this.gridSize +
+      head.y *
+        this.gridSize +
       this.gridSize / 2;
 
     const particles: Particle[] =
       Array.from(
-        { length: 35 },
+        {
+          length: 35,
+        },
         () => {
           const angle =
-            Math.random() * Math.PI * 2;
+            Math.random() *
+            Math.PI *
+            2;
 
           const speed =
-            1 + Math.random() * 5;
+            1 +
+            Math.random() *
+              5;
 
           return {
             x: explosionX,
             y: explosionY,
+
             velocityX:
-              Math.cos(angle) * speed,
+              Math.cos(angle) *
+              speed,
+
             velocityY:
-              Math.sin(angle) * speed,
+              Math.sin(angle) *
+              speed,
+
             size:
-              2 + Math.random() * 6,
+              2 +
+              Math.random() *
+                6,
+
             life: 1,
           };
         }
@@ -393,25 +587,37 @@ export class Snake implements AfterViewInit, OnDestroy {
 
       let particlesAlive = false;
 
-      for (const particle of particles) {
+      for (
+        const particle of particles
+      ) {
         if (particle.life <= 0) {
           continue;
         }
 
         particlesAlive = true;
 
-        particle.x += particle.velocityX;
-        particle.y += particle.velocityY;
+        particle.x +=
+          particle.velocityX;
 
-        particle.velocityX *= 0.97;
-        particle.velocityY *= 0.97;
+        particle.y +=
+          particle.velocityY;
 
-        particle.life -= 0.035;
+        particle.velocityX *=
+          0.97;
+
+        particle.velocityY *=
+          0.97;
+
+        particle.life -=
+          0.035;
 
         this.ctx.save();
 
         this.ctx.globalAlpha =
-          Math.max(particle.life, 0);
+          Math.max(
+            particle.life,
+            0
+          );
 
         this.ctx.fillStyle =
           particle.life > 0.5
@@ -434,17 +640,25 @@ export class Snake implements AfterViewInit, OnDestroy {
 
       if (particlesAlive) {
         this.animationFrame =
-          requestAnimationFrame(animate);
+          requestAnimationFrame(
+            animate
+          );
 
         return;
       }
 
-      this.animationFrame = undefined;
-      this.isExploding = false;
-      this.gameOver = true;
+      this.animationFrame =
+        undefined;
+
+      this.isExploding =
+        false;
+
+      this.gameOver =
+        true;
 
       this.saveScore();
       this.draw();
+
       this.changeDetector.detectChanges();
     };
 
@@ -452,7 +666,10 @@ export class Snake implements AfterViewInit, OnDestroy {
   }
 
   private saveScore(): void {
-    if (this.scoreSaved || this.savingScore) {
+    if (
+      this.scoreSaved ||
+      this.savingScore
+    ) {
       return;
     }
 
@@ -470,9 +687,11 @@ export class Snake implements AfterViewInit, OnDestroy {
     this.savingScore = true;
     this.scoreSaveError = '';
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+    const headers =
+      new HttpHeaders({
+        Authorization:
+          `Bearer ${token}`,
+      });
 
     const body = {
       game: 'snake',
@@ -480,13 +699,20 @@ export class Snake implements AfterViewInit, OnDestroy {
     };
 
     this.http
-      .post(this.scoreApiUrl, body, {
-        headers,
-      })
+      .post(
+        this.scoreApiUrl,
+        body,
+        {
+          headers,
+        }
+      )
       .subscribe({
         next: () => {
-          this.scoreSaved = true;
-          this.savingScore = false;
+          this.scoreSaved =
+            true;
+
+          this.savingScore =
+            false;
 
           console.log(
             'Snake score saved successfully.'
@@ -496,7 +722,8 @@ export class Snake implements AfterViewInit, OnDestroy {
         },
 
         error: error => {
-          this.savingScore = false;
+          this.savingScore =
+            false;
 
           this.scoreSaveError =
             error?.error?.message ||

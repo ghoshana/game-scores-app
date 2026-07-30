@@ -20,18 +20,19 @@ h1 {
 .board-wrapper {
   position: relative;
   width: 400px;
-  height: 400px;
   max-width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 canvas {
   display: block;
-  width: 400px;
-  height: 400px;
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
   border: 3px solid #444;
   background: #111;
   box-sizing: border-box;
+  touch-action: none; /* stop the page scrolling/zooming while swiping */
 }
 
 .game-over-overlay {
@@ -126,4 +127,60 @@ canvas {
   margin: 0;
   color: #555;
   font-size: 1.1rem;
+  text-align: center;
+}
+
+/* --- D-pad --- */
+
+.dpad {
+  display: none; /* hidden by default; shown on touch/small screens below */
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  user-select: none;
+}
+
+.dpad-middle-row {
+  display: flex;
+  gap: 64px; /* leaves a gap in the middle matching the up/down buttons */
+}
+
+.dpad-button {
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 10px;
+  background: #2b2b2b;
+  color: white;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation; /* avoid double-tap zoom delay on buttons */
+}
+
+.dpad-button:active {
+  background: #444;
+  transform: scale(0.95);
+}
+
+/* Show the D-pad on small/touch screens, keep it off larger desktop
+   layouts where the keyboard is the natural input */
+@media (max-width: 600px), (pointer: coarse) {
+  .dpad {
+    display: flex;
+  }
+
+  .snake-container {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .instructions {
+    font-size: 0.95rem;
+  }
 }
