@@ -1,0 +1,16 @@
+<div style="max-width: 320px; margin: 60px auto; font-family: sans-serif;">
+  <h2>Login</h2>
+
+  <input [(ngModel)]="username" placeholder="Username"
+    style="display:block; width:100%; padding:8px; margin-bottom:10px;" />
+
+  <input [(ngModel)]="password" type="password" placeholder="Password"
+    style="display:block; width:100%; padding:8px; margin-bottom:10px;" />
+
+  <button (click)="onLogin()"
+    style="width:100%; padding:10px; cursor:pointer;">Log in</button>
+
+  <p style="color:red;">{{ message }}</p>
+
+  <p><a routerLink="/register">Need an account? Register</a></p>
+</div>
