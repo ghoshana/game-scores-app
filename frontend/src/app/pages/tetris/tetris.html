@@ -1,20 +1,51 @@
-<section style="display:flex; flex-direction:column; align-items:center; gap:14px; padding:24px; font-family:sans-serif;">
+<section class="tetris-container">
   <h1>Tetris</h1>
-  <p style="font-size:1.5rem; font-weight:700;">Score: {{ score }}</p>
 
-  <div style="position:relative;">
-    <canvas #board width="250" height="500" style="border:3px solid #444; background:#111;"></canvas>
+  <p class="score">
+    Score: {{ score }}
+  </p>
 
-    @if (gameOver) {
-      <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.65);">
-        <div style="text-align:center; color:white; background:#1e1e1e; border:2px solid #777; border-radius:12px; padding:24px;">
-          <h2>Game Over</h2>
-          <p>Final score: <strong>{{ score }}</strong></p>
-          <button (click)="restart()" style="padding:11px 24px; border:0; border-radius:7px; background:#43a047; color:white; font-weight:700; cursor:pointer;">Restart</button>
-        </div>
+  <div class="board-wrapper">
+    <canvas
+      #board
+      width="250"
+      height="500"
+      aria-label="Tetris game board">
+    </canvas>
+
+   @if (gameOver) {
+  <div class="game-over-overlay">
+    <div class="game-over-box">
+      <h2>Game Over</h2>
+
+      <p>
+        Final score:
+        <strong>{{ score }}</strong>
+      </p>
+
+      <div class="game-over-actions">
+        <button
+          type="button"
+          class="restart-button"
+          (click)="restart()">
+          Restart
+        </button>
+
+        <a
+          routerLink="/"
+          class="home-button">
+          Go to Home
+        </a>
       </div>
-    }
+    </div>
+  </div>
+}
   </div>
 
-  <p style="color:#555;">Arrow keys: move & down · Up arrow: rotate</p>
+  <div class="instructions">
+    <p>← → Move</p>
+    <p>↓ Move down</p>
+    <p>↑ Rotate</p>
+    <p>Space: hard drop</p>
+  </div>
 </section>

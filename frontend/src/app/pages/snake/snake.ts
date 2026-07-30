@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { RouterLink } from '@angular/router';
 interface Position {
   x: number;
   y: number;
@@ -25,7 +25,7 @@ interface Particle {
 @Component({
   selector: 'app-snake',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './snake.html',
   styleUrl: './snake.css',
 })

@@ -68,30 +68,48 @@ canvas {
   font-size: 1.2rem;
 }
 
-button {
-  padding: 11px 24px;
+.game-over-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.restart-button,
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 110px;
+  padding: 11px 18px;
 
   border: 0;
   border-radius: 7px;
 
-  background: #43a047;
   color: white;
-
   font-size: 1rem;
   font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
 }
 
-button:hover {
+.restart-button {
+  background: #43a047;
+}
+
+.restart-button:hover {
   background: #388e3c;
 }
 
-button:active {
-  transform: scale(0.97);
+.home-button {
+  background: #1976d2;
 }
 
-.instructions {
-  margin: 0;
-  color: #555;
-  font-size: 1.1rem;
+.home-button:hover {
+  background: #1565c0;
+}
+
+.restart-button:active,
+.home-button:active {
+  transform: scale(0.97);
 }

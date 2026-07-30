@@ -13,24 +13,33 @@
       aria-label="Snake game board">
     </canvas>
 
-    @if (gameOver) {
-      <div class="game-over-overlay">
-        <div class="game-over-box">
-          <h2>Game Over</h2>
+   @if (gameOver) {
+  <div class="game-over-overlay">
+    <div class="game-over-box">
+      <h2>Game Over</h2>
 
-          <p>
-            Final score:
-            <strong>{{ score }}</strong>
-          </p>
+      <p>
+        Final score:
+        <strong>{{ score }}</strong>
+      </p>
 
-          <button
-            type="button"
-            (click)="restart()">
-            Restart
-          </button>
-        </div>
+      <div class="game-over-actions">
+        <button
+          type="button"
+          class="restart-button"
+          (click)="restart()">
+          Restart
+        </button>
+
+        <a
+          routerLink="/"
+          class="home-button">
+          Go to Home
+        </a>
       </div>
-    }
+    </div>
+  </div>
+}
   </div>
 
   <p class="instructions">
