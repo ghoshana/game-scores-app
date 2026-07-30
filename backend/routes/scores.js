@@ -36,12 +36,3 @@ router.get('/mine', auth, async (req, res) => {
 
 module.exports = router;
 
-//module.exports = router;
-//router.get('/all', async (req, res) => {
-//  const scores = await Score.find({});
-//  res.json(scores);
-//});
-//router.get('/debug/:userId', async (req, res) => {
-//  const scores = await Score.find({ user: req.params.userId });
-//  res.json({ lookedFor: req.params.userId, found: scores });
-//});
