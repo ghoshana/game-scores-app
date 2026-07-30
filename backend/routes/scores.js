@@ -19,8 +19,6 @@ router.post('/', auth, async (req, res) => {
     }
     res.json({ message: 'Score saved' });
   } catch (err) {
-    console.log('==== SCORES SAVE ERROR ====');
-    console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -32,11 +30,11 @@ router.get('/mine', auth, async (req, res) => {
     scores.forEach(s => { result[s.game] = s.score; });
     res.json(result);
   } catch (err) {
-    console.log('==== SCORES MINE ERROR ====');
-    console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+module.exports = router;
 
 //module.exports = router;
 //router.get('/all', async (req, res) => {
