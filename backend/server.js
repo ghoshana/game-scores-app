@@ -2,36 +2,70 @@
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const app = express();
-app.disable('etag');
-app.use(cors({
-  origin: 'http://localhost:4200',
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-app.use(express.json());
-
 const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
-
 const scoreRoutes = require('./routes/scores');
-app.use('/api/scores', scoreRoutes);
-
 const authMiddleware = require('./middleware/auth');
 
-app.get('/api/protected-test', authMiddleware, (req, res) => {
-  res.json({ message: 'You are authenticated!', userId: req.userId });
+const app = express();
+
+app.disable('etag');
+
+// Allow your local Angular app and deployed Vercel app
+// to call the backend.
+app.use(cors());
+
+// Parse JSON request bodies.
+app.use(express.json());
+
+// API routes.
+app.use('/api/auth', authRoutes);
+app.use('/api/scores', scoreRoutes);
+
+// Protected test route.
+app.get(
+  '/api/protected-test',
+  authMiddleware,
+  (req, res) => {
+    res.json({
+      message: 'You are authenticated!',
+      userId: req.userId,
+    });
+  }
+);
+
+// Health-check route for Render.
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+  });
 });
 
-app.get('/', (req, res) => res.send('API is running'));
+// Root route.
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
+
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server on port ${PORT}`));
+
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   })
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch(error => {
+    console.error(
+      'MongoDB connection error:',
+      error
+    );
+
+    process.exit(1);
+  });
