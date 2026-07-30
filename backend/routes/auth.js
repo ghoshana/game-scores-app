@@ -19,10 +19,12 @@ router.post('/register', async (req, res) => {
     const user = await User.create({ username, password: hashed });
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({ token, username: user.username });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+    } catch (err) {
+        console.log('==== REGISTER ERROR ====');
+        console.log(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+    });
 
 router.post('/login', async (req, res) => {
   try {
