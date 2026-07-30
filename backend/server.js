@@ -7,11 +7,18 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.disable('etag');
+app.use(cors({
+  origin: 'http://localhost:4200',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+
+const scoreRoutes = require('./routes/scores');
+app.use('/api/scores', scoreRoutes);
 
 const authMiddleware = require('./middleware/auth');
 
