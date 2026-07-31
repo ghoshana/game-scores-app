@@ -1,51 +1,52 @@
-<section class="tetris-container">
-  <h1>Tetris</h1>
+<div
+  class="dpad"
+  role="group"
+  aria-label="Tetris controls"
+>
+  <button
+    type="button"
+    class="dpad-button"
+    aria-label="Rotate piece"
+    (click)="control('rotate')"
+  >
+    ⟳
+  </button>
 
-  <p class="score">
-    Score: {{ score }}
-  </p>
+  <div class="dpad-middle-row">
+    <button
+      type="button"
+      class="dpad-button"
+      aria-label="Move left"
+      (click)="control('left')"
+    >
+      ◀
+    </button>
 
-  <div class="board-wrapper">
-    <canvas
-      #board
-      width="250"
-      height="500"
-      aria-label="Tetris game board">
-    </canvas>
+    <button
+      type="button"
+      class="dpad-button"
+      aria-label="Move down"
+      (click)="control('down')"
+    >
+      ▼
+    </button>
 
-   @if (gameOver) {
-  <div class="game-over-overlay">
-    <div class="game-over-box">
-      <h2>Game Over</h2>
-
-      <p>
-        Final score:
-        <strong>{{ score }}</strong>
-      </p>
-
-      <div class="game-over-actions">
-        <button
-          type="button"
-          class="restart-button"
-          (click)="restart()">
-          Restart
-        </button>
-
-        <a
-          routerLink="/"
-          class="home-button">
-          Go to Home
-        </a>
-      </div>
-    </div>
+    <button
+      type="button"
+      class="dpad-button"
+      aria-label="Move right"
+      (click)="control('right')"
+    >
+      ▶
+    </button>
   </div>
-}
-  </div>
 
-  <div class="instructions">
-    <p>← → Move</p>
-    <p>↓ Move down</p>
-    <p>↑ Rotate</p>
-    <p>Space: hard drop</p>
-  </div>
-</section>
+  <button
+    type="button"
+    class="dpad-button drop-button"
+    aria-label="Drop piece"
+    (click)="control('drop')"
+  >
+    Drop
+  </button>
+</div>

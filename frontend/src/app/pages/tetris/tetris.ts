@@ -414,6 +414,30 @@ export class Tetris implements AfterViewInit, OnDestroy {
 
     this.draw();
   };
+  control(action: string): void {
+    if (this.gameOver) return;
+
+    if (action === 'left') {
+      if (!this.collides(this.current.shape, this.current.x - 1, this.current.y)) {
+        this.current.x--;
+      }
+    } else if (action === 'right') {
+      if (!this.collides(this.current.shape, this.current.x + 1, this.current.y)) {
+        this.current.x++;
+      }
+    } else if (action === 'down') {
+      this.moveDown();
+    } else if (action === 'rotate') {
+      const rotatedShape = this.rotate(this.current.shape);
+      if (!this.collides(rotatedShape, this.current.x, this.current.y)) {
+        this.current.shape = rotatedShape;
+      }
+    } else if (action === 'drop') {
+      this.hardDrop();
+    }
+
+    this.draw();
+  }
 
   private draw(): void {
     this.drawBackground();
@@ -503,7 +527,7 @@ export class Tetris implements AfterViewInit, OnDestroy {
 
     this.ctx.fillRect(
       x * this.cellSize + 1,
-      y * this.cellSize + 1,
+      y * this.cellSize + 1,  
       this.cellSize - 2,
       this.cellSize - 2
     );
