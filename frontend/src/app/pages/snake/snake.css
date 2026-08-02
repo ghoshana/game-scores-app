@@ -22,29 +22,54 @@
   z-index: 0;
 }
 
+/* --- background snake artwork --- */
+
 .bg-snake {
   position: absolute;
-  width: 220px;
+  width: 240px;
   height: auto;
-  opacity: 0.28;
-  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 10%));
+  opacity: 0.34;
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 12%));
   will-change: transform;
 }
 
-.bg-snake path {
+.bg-snake .snake-body {
   fill: none;
-  stroke: #38b000;
   stroke-width: 18;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bg-snake .snake-gloss {
+  fill: none;
+  stroke: rgb(255 255 255 / 55%);
+  stroke-width: 5;
   stroke-linecap: round;
 }
 
-.bg-snake .snake-head {
-  fill: #70e000;
+.bg-snake .snake-scales {
+  fill: none;
+  stroke: rgb(27 67 50 / 38%);
+  stroke-width: 11;
+  stroke-linecap: round;
+  stroke-dasharray: 1 15;
 }
 
-.bg-snake .eye {
-  fill: #1b4332;
+.bg-snake .snake-head-shape {
+  stroke: rgb(27 67 50 / 55%);
+  stroke-width: 1.5;
 }
+
+.bg-snake .snake-tongue {
+  fill: none;
+  stroke: #e5383b;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bg-snake .eye-white { fill: #f8fafc; }
+.bg-snake .eye-slit  { fill: #10231a; }
 
 .snake-left-right {
   top: 12%;
@@ -55,14 +80,14 @@
 .snake-top-bottom {
   top: -240px;
   left: 8%;
-  width: 90px;
+  width: 96px;
   animation: move-top-bottom 20s linear infinite;
 }
 
 .snake-bottom-top {
   bottom: -240px;
   right: 10%;
-  width: 90px;
+  width: 96px;
   animation: move-bottom-top 22s linear infinite;
 }
 
@@ -373,7 +398,7 @@ canvas {
   }
 
   .bg-snake {
-    opacity: 0.22;
+    opacity: 0.24;
   }
 }
 
