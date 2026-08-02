@@ -1,25 +1,115 @@
-<div style="max-width:400px; margin:60px auto; font-family:sans-serif; text-align:center;">
-  <h1>Game Scores</h1>
-
-  @if (username) {
-    <p>Welcome back, <strong>{{ username }}</strong>!</p>
-
-    <div style="margin:20px 0; padding:16px; border:1px solid #ddd; border-radius:8px;">
-      <h3>Your Best Scores</h3>
-      <p>🐍 Snake: <strong>{{ scores.snake || 0 }}</strong></p>
-      <p>🧱 Tetris: <strong>{{ scores.tetris || 0 }}</strong></p>
+<div class="home-page">
+  <!-- falling tetris bricks -->
+  <div class="brick-background" aria-hidden="true">
+    <div class="falling-piece piece-one">
+      <span class="brick cyan"></span>
+      <span class="brick cyan"></span>
+      <span class="brick cyan"></span>
+      <span class="brick cyan"></span>
     </div>
+    <div class="falling-piece piece-three">
+      <span class="brick yellow"></span>
+      <span class="brick yellow"></span>
+      <span class="brick yellow lower-left"></span>
+      <span class="brick yellow lower-right"></span>
+    </div>
+    <div class="falling-piece piece-four">
+      <span class="brick red"></span>
+      <span class="brick red"></span>
+      <span class="brick red lower-middle"></span>
+      <span class="brick red lower-right"></span>
+    </div>
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+  </div>
 
-    <p>
-      <a routerLink="/snake">Play Snake</a> &nbsp;|&nbsp;
-      <a routerLink="/tetris">Play Tetris</a>
-    </p>
-    <p><a href="javascript:void(0)" (click)="logout()">Log out</a></p>
-  } @else {
-    <p>Please log in to play and save your best scores.</p>
-    <p>
-      <a routerLink="/login">Login</a> &nbsp;|&nbsp;
-      <a routerLink="/register">Register</a>
-    </p>
-  }
+  <!-- crawling snakes -->
+  <div class="background-snakes" aria-hidden="true">
+    <svg class="bg-snake snake-left-right" viewBox="0 0 260 80">
+      <defs>
+        <linearGradient id="homeGradLR" gradientUnits="userSpaceOnUse" x1="12" y1="40" x2="234" y2="40">
+          <stop offset="0" stop-color="#a7f3b0" />
+          <stop offset="0.5" stop-color="#38b000" />
+          <stop offset="1" stop-color="#1b6b2f" />
+        </linearGradient>
+      </defs>
+      <path class="snake-body" stroke="url(#homeGradLR)" d="M12 40 C46 8, 78 72, 110 40 S176 8, 214 40">
+        <animate attributeName="d" dur="2s" repeatCount="indefinite"
+          values="M12 40 C46 8, 78 72, 110 40 S176 8, 214 40;
+                  M12 40 C46 72, 78 8, 110 40 S176 72, 214 40;
+                  M12 40 C46 8, 78 72, 110 40 S176 8, 214 40" />
+      </path>
+      <path class="snake-scales" d="M12 40 C46 8, 78 72, 110 40 S176 8, 214 40">
+        <animate attributeName="d" dur="2s" repeatCount="indefinite"
+          values="M12 40 C46 8, 78 72, 110 40 S176 8, 214 40;
+                  M12 40 C46 72, 78 8, 110 40 S176 72, 214 40;
+                  M12 40 C46 8, 78 72, 110 40 S176 8, 214 40" />
+      </path>
+      <ellipse class="snake-head-shape" cx="215" cy="40" rx="17" ry="13" fill="url(#homeGradLR)" />
+      <path class="snake-tongue" d="M232 40 L246 40 M246 40 L252 35 M246 40 L252 45" />
+      <circle class="eye-white" cx="219" cy="34" r="2.6" />
+      <circle class="eye-white" cx="219" cy="46" r="2.6" />
+      <ellipse class="eye-slit" cx="219" cy="34" rx="0.8" ry="2" />
+      <ellipse class="eye-slit" cx="219" cy="46" rx="0.8" ry="2" />
+    </svg>
+
+    <svg class="bg-snake snake-diagonal" viewBox="0 0 260 130">
+      <defs>
+        <linearGradient id="homeGradDiag" gradientUnits="userSpaceOnUse" x1="12" y1="72" x2="234" y2="78">
+          <stop offset="0" stop-color="#a7f3b0" />
+          <stop offset="0.5" stop-color="#38b000" />
+          <stop offset="1" stop-color="#1b6b2f" />
+        </linearGradient>
+      </defs>
+      <path class="snake-body" stroke="url(#homeGradDiag)" d="M12 72 C52 10, 92 112, 132 56 S186 8, 214 78">
+        <animate attributeName="d" dur="2.4s" repeatCount="indefinite"
+          values="M12 72 C52 10, 92 112, 132 56 S186 8, 214 78;
+                  M12 72 C52 112, 92 10, 132 56 S186 108, 214 78;
+                  M12 72 C52 10, 92 112, 132 56 S186 8, 214 78" />
+      </path>
+      <path class="snake-scales" d="M12 72 C52 10, 92 112, 132 56 S186 8, 214 78">
+        <animate attributeName="d" dur="2.4s" repeatCount="indefinite"
+          values="M12 72 C52 10, 92 112, 132 56 S186 8, 214 78;
+                  M12 72 C52 112, 92 10, 132 56 S186 108, 214 78;
+                  M12 72 C52 10, 92 112, 132 56 S186 8, 214 78" />
+      </path>
+      <ellipse class="snake-head-shape" cx="216" cy="78" rx="17" ry="13" fill="url(#homeGradDiag)" />
+      <path class="snake-tongue" d="M233 78 L247 77 M247 77 L253 72 M247 77 L252 82" />
+      <circle class="eye-white" cx="220" cy="72" r="2.6" />
+      <circle class="eye-white" cx="220" cy="84" r="2.6" />
+      <ellipse class="eye-slit" cx="220" cy="72" rx="0.8" ry="2" />
+      <ellipse class="eye-slit" cx="220" cy="84" rx="0.8" ry="2" />
+    </svg>
+  </div>
+
+  <!-- foreground card -->
+  <section class="home-container">
+    <div class="home-card">
+      <p class="home-label">Arcade</p>
+      <h1>Game Scores</h1>
+
+      @if (username) {
+        <p class="welcome">Welcome back, <strong>{{ username }}</strong>!</p>
+
+        <div class="scores-box">
+          <h3>Your Best Scores</h3>
+          <p>🐍 Snake: <strong>{{ scores.snake || 0 }}</strong></p>
+          <p>🧱 Tetris: <strong>{{ scores.tetris || 0 }}</strong></p>
+        </div>
+
+        <div class="play-links">
+          <a routerLink="/snake" class="play-button snake-btn">Play Snake</a>
+          <a routerLink="/tetris" class="play-button tetris-btn">Play Tetris</a>
+        </div>
+
+        <button type="button" class="logout-link" (click)="logout()">Log out</button>
+      } @else {
+        <p class="welcome">Please log in to play and save your best scores.</p>
+        <div class="play-links">
+          <a routerLink="/login" class="play-button snake-btn">Login</a>
+          <a routerLink="/register" class="play-button tetris-btn">Register</a>
+        </div>
+      }
+    </div>
+  </section>
 </div>
