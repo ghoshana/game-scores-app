@@ -1,97 +1,171 @@
-<section class="tetris-container">
-  <h1>Tetris</h1>
-
-  <p class="score">
-    Score: {{ score }}
-  </p>
-
-  <div class="board-wrapper">
-    <canvas
-      #board
-      width="250"
-      height="500"
-      aria-label="Tetris game board">
-    </canvas>
-
-    @if (gameOver) {
-      <div class="game-over-overlay">
-        <div class="game-over-box">
-          <h2>Game Over</h2>
-
-          <p>
-            Final score:
-            <strong>{{ score }}</strong>
-          </p>
-
-          <div class="game-over-actions">
-            <button
-              type="button"
-              class="restart-button"
-              (click)="restart()">
-              Restart
-            </button>
-
-            <a
-              routerLink="/"
-              class="home-button">
-              Go to Home
-            </a>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-
-  <p class="instructions">
-    Use the arrow keys or the buttons below.
-    Press the spacebar or Drop for a hard drop.
-  </p>
-
+<div class="tetris-page">
   <div
-    class="dpad"
-    role="group"
-    aria-label="Tetris controls">
-
-    <button
-      type="button"
-      class="dpad-button"
-      aria-label="Rotate piece"
-      (click)="control('rotate')">
-      ⟳
-    </button>
-
-    <div class="dpad-middle-row">
-      <button
-        type="button"
-        class="dpad-button"
-        aria-label="Move left"
-        (click)="control('left')">
-        ◀
-      </button>
-
-      <button
-        type="button"
-        class="dpad-button"
-        aria-label="Move down"
-        (click)="control('down')">
-        ▼
-      </button>
-
-      <button
-        type="button"
-        class="dpad-button"
-        aria-label="Move right"
-        (click)="control('right')">
-        ▶
-      </button>
+    class="brick-background"
+    aria-hidden="true"
+  >
+    <div class="falling-piece piece-one">
+      <span class="brick cyan"></span>
+      <span class="brick cyan"></span>
+      <span class="brick cyan"></span>
+      <span class="brick cyan"></span>
     </div>
 
-    <button
-      type="button"
-      class="dpad-button drop-button"
-      aria-label="Drop piece"
-      (click)="control('drop')">
-      Drop
-    </button>
+    <div class="falling-piece piece-two">
+      <span class="brick purple"></span>
+      <span class="brick purple"></span>
+      <span class="brick purple"></span>
+      <span class="brick purple offset-center"></span>
+    </div>
+
+    <div class="falling-piece piece-three">
+      <span class="brick yellow"></span>
+      <span class="brick yellow"></span>
+      <span class="brick yellow lower-left"></span>
+      <span class="brick yellow lower-right"></span>
+    </div>
+
+    <div class="falling-piece piece-four">
+      <span class="brick red"></span>
+      <span class="brick red"></span>
+      <span class="brick red lower-middle"></span>
+      <span class="brick red lower-right"></span>
+    </div>
+
+    <div class="falling-piece piece-five">
+      <span class="brick green"></span>
+      <span class="brick green"></span>
+      <span class="brick green lower-left"></span>
+      <span class="brick green lower-middle"></span>
+    </div>
+
+    <div class="falling-piece piece-six">
+      <span class="brick blue"></span>
+      <span class="brick blue lower-left"></span>
+      <span class="brick blue lower-middle"></span>
+      <span class="brick blue lower-right"></span>
+    </div>
+
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+    <div class="glow glow-three"></div>
   </div>
-</section>
+
+  <section class="tetris-container">
+    <header class="game-header">
+      <p class="game-label">
+        Classic Arcade
+      </p>
+
+      <h1>Tetris</h1>
+
+      <div class="score-card">
+        <span class="score-label">
+          Score
+        </span>
+
+        <strong class="score-value">
+          {{ score }}
+        </strong>
+      </div>
+    </header>
+
+    <div class="board-shell">
+      <div class="board-top-light"></div>
+
+      <div class="board-wrapper">
+        <canvas
+          #board
+          width="250"
+          height="500"
+          aria-label="Tetris game board">
+        </canvas>
+
+        @if (gameOver) {
+          <div class="game-over-overlay">
+            <div class="game-over-box">
+              <p class="game-over-label">
+                Round finished
+              </p>
+
+              <h2>Game Over</h2>
+
+              <p>
+                Final score:
+                <strong>{{ score }}</strong>
+              </p>
+
+              <div class="game-over-actions">
+                <button
+                  type="button"
+                  class="restart-button"
+                  (click)="restart()">
+                  Restart
+                </button>
+
+                <a
+                  routerLink="/"
+                  class="home-button">
+                  Go to Home
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <p class="instructions">
+      Use the arrow keys or the controls below.
+      Press Space or Drop for a hard drop.
+    </p>
+
+    <div
+      class="dpad"
+      role="group"
+      aria-label="Tetris controls"
+    >
+      <button
+        type="button"
+        class="dpad-button rotate-button"
+        aria-label="Rotate piece"
+        (click)="control('rotate')">
+        <span class="button-icon">⟳</span>
+        <span class="button-text">Rotate</span>
+      </button>
+
+      <div class="dpad-middle-row">
+        <button
+          type="button"
+          class="dpad-button"
+          aria-label="Move left"
+          (click)="control('left')">
+          ◀
+        </button>
+
+        <button
+          type="button"
+          class="dpad-button"
+          aria-label="Move down"
+          (click)="control('down')">
+          ▼
+        </button>
+
+        <button
+          type="button"
+          class="dpad-button"
+          aria-label="Move right"
+          (click)="control('right')">
+          ▶
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="dpad-button drop-button"
+        aria-label="Drop piece"
+        (click)="control('drop')">
+        Drop
+      </button>
+    </div>
+  </section>
+</div>
