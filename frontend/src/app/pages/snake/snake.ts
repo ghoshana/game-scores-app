@@ -468,7 +468,7 @@ export class Snake implements AfterViewInit, OnDestroy {
       this.gridSize;
 
     this.ctx.fillStyle =
-      '#111111';
+      '#020617';
 
     this.ctx.fillRect(
       0,

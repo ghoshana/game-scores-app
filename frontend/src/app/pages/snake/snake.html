@@ -1,106 +1,143 @@
-<section class="snake-container">
-  <h1>Snake</h1>
-
-  <p class="score">
-    Score: {{ score }}
-  </p>
-
-  <div class="board-wrapper">
-    <canvas
-      #board
-      width="400"
-      height="400"
-      aria-label="Snake game board">
-    </canvas>
-
-    @if (gameOver) {
-      <div class="game-over-overlay">
-        <div class="game-over-box">
-          <h2>Game Over</h2>
-
-          <p>
-            Final score:
-            <strong>{{ score }}</strong>
-          </p>
-
-          @if (savingScore) {
-            <p class="save-status">
-              Saving score...
-            </p>
-          }
-
-          @if (scoreSaved) {
-            <p class="save-success">
-              Score saved successfully.
-            </p>
-          }
-
-          @if (scoreSaveError) {
-            <p class="save-error">
-              {{ scoreSaveError }}
-            </p>
-          }
-
-          <div class="game-over-actions">
-            <button
-              type="button"
-              class="restart-button"
-              (click)="restart()">
-              Restart
-            </button>
-
-            <a
-              routerLink="/"
-              class="home-button">
-              Go to Home
-            </a>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-
-  <p class="instructions">
-    Use the arrow keys, swipe, or the buttons below to move the snake.
-  </p>
-
-  <div
-    class="dpad"
-    role="group"
-    aria-label="Snake movement controls">
-
-    <button
-      type="button"
-      class="dpad-button dpad-up"
-      aria-label="Move up"
-      (click)="move(0, -1)">
-      ▲
-    </button>
-
-    <div class="dpad-middle-row">
-      <button
-        type="button"
-        class="dpad-button dpad-left"
-        aria-label="Move left"
-        (click)="move(-1, 0)">
-        ◀
-      </button>
-
-      <button
-        type="button"
-        class="dpad-button dpad-right"
-        aria-label="Move right"
-        (click)="move(1, 0)">
-        ▶
-      </button>
+<div class="snake-page">
+  <div class="background-snakes" aria-hidden="true">
+    <div class="background-snake snake-one">
+      <span class="snake-head"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
 
-    <button
-      type="button"
-      class="dpad-button dpad-down"
-      aria-label="Move down"
-      (click)="move(0, 1)">
-      ▼
-    </button>
+    <div class="background-snake snake-two">
+      <span class="snake-head"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="background-snake snake-three">
+      <span class="snake-head"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </div>
-</section>
+
+  <section class="snake-container">
+    <h1>Snake</h1>
+
+    <p class="score">
+      Score: {{ score }}
+    </p>
+
+    <div class="board-wrapper">
+      <canvas
+        #board
+        width="400"
+        height="400"
+        aria-label="Snake game board"
+      ></canvas>
+
+      @if (gameOver) {
+        <div class="game-over-overlay">
+          <div class="game-over-box">
+            <h2>Game Over</h2>
+
+            <p>
+              Final score:
+              <strong>{{ score }}</strong>
+            </p>
+
+            @if (savingScore) {
+              <p class="save-status">
+                Saving score...
+              </p>
+            }
+
+            @if (scoreSaved) {
+              <p class="save-success">
+                Score saved successfully.
+              </p>
+            }
+
+            @if (scoreSaveError) {
+              <p class="save-error">
+                {{ scoreSaveError }}
+              </p>
+            }
+
+            <div class="game-over-actions">
+              <button
+                type="button"
+                class="restart-button"
+                (click)="restart()"
+              >
+                Restart
+              </button>
+
+              <a
+                routerLink="/"
+                class="home-button"
+              >
+                Go to Home
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <p class="instructions">
+      Use the arrow keys, swipe, or the buttons below to move the snake.
+    </p>
+
+    <div
+      class="dpad"
+      role="group"
+      aria-label="Snake movement controls"
+    >
+      <button
+        type="button"
+        class="dpad-button dpad-up"
+        aria-label="Move up"
+        (click)="move(0, -1)"
+      >
+        ▲
+      </button>
+
+      <div class="dpad-middle-row">
+        <button
+          type="button"
+          class="dpad-button dpad-left"
+          aria-label="Move left"
+          (click)="move(-1, 0)"
+        >
+          ◀
+        </button>
+
+        <button
+          type="button"
+          class="dpad-button dpad-right"
+          aria-label="Move right"
+          (click)="move(1, 0)"
+        >
+          ▶
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="dpad-button dpad-down"
+        aria-label="Move down"
+        (click)="move(0, 1)"
+      >
+        ▼
+      </button>
+    </div>
+  </section>
+</div>
