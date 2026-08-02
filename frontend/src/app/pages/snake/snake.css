@@ -7,22 +7,11 @@
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(
-      circle at 15% 10%,
-      rgb(31 78 60 / 55%) 0%,
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 85% 85%,
-      rgb(30 64 175 / 35%) 0%,
-      transparent 34%
-    ),
-    linear-gradient(
-      135deg,
-      #07110d 0%,
-      #0f172a 50%,
-      #111827 100%
-    );
+    radial-gradient(circle at 15% 15%, #fff7b2 0%, transparent 28%),
+    radial-gradient(circle at 85% 20%, #ffd6e7 0%, transparent 30%),
+    radial-gradient(circle at 25% 80%, #c7f9cc 0%, transparent 28%),
+    radial-gradient(circle at 80% 85%, #bde0fe 0%, transparent 28%),
+    linear-gradient(135deg, #fff9db 0%, #d8f3dc 45%, #caf0f8 100%);
 }
 
 .background-snakes {
@@ -33,188 +22,109 @@
   z-index: 0;
 }
 
-.background-snake {
+.bg-snake {
   position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  opacity: 0.13;
+  width: 220px;
+  height: auto;
+  opacity: 0.28;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 10%));
   will-change: transform;
 }
 
-.background-snake span {
-  width: 22px;
-  height: 22px;
-  flex: 0 0 auto;
-  border-radius: 7px;
-  background:
-    linear-gradient(
-      135deg,
-      #86efac,
-      #22c55e
-    );
-  box-shadow:
-    0 0 12px rgb(34 197 94 / 30%);
+.bg-snake path {
+  fill: none;
+  stroke: #38b000;
+  stroke-width: 18;
+  stroke-linecap: round;
 }
 
-.background-snake .snake-head {
-  position: relative;
-  background:
-    linear-gradient(
-      135deg,
-      #dcfce7,
-      #4ade80
-    );
+.bg-snake .snake-head {
+  fill: #70e000;
 }
 
-.background-snake .snake-head::before,
-.background-snake .snake-head::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #052e16;
+.bg-snake .eye {
+  fill: #1b4332;
 }
 
-.background-snake .snake-head::before {
-  left: 5px;
+.snake-left-right {
+  top: 12%;
+  left: -240px;
+  animation: move-left-right 18s linear infinite;
 }
 
-.background-snake .snake-head::after {
-  right: 5px;
+.snake-top-bottom {
+  top: -240px;
+  left: 8%;
+  width: 90px;
+  animation: move-top-bottom 20s linear infinite;
 }
 
-.snake-one {
-  top: 14%;
-  left: -250px;
-  animation:
-    move-snake-one 24s linear infinite;
+.snake-bottom-top {
+  bottom: -240px;
+  right: 10%;
+  width: 90px;
+  animation: move-bottom-top 22s linear infinite;
 }
 
-.snake-two {
-  top: 58%;
-  left: -220px;
-  animation:
-    move-snake-two 31s linear infinite;
+.snake-diagonal {
+  top: 65%;
+  left: -260px;
+  animation: move-diagonal 24s linear infinite;
 }
 
-.snake-three {
-  top: 82%;
-  left: -300px;
-  animation:
-    move-snake-three 37s linear infinite;
-}
-
-@keyframes move-snake-one {
+@keyframes move-left-right {
   0% {
-    transform:
-      translateX(0)
-      translateY(0)
-      rotate(8deg);
-  }
-
-  25% {
-    transform:
-      translateX(35vw)
-      translateY(-18px)
-      rotate(3deg);
+    transform: translateX(0) rotate(4deg);
   }
 
   50% {
-    transform:
-      translateX(70vw)
-      translateY(18px)
-      rotate(9deg);
-  }
-
-  75% {
-    transform:
-      translateX(100vw)
-      translateY(-10px)
-      rotate(4deg);
+    transform: translateX(60vw) translateY(-12px) rotate(-2deg);
   }
 
   100% {
-    transform:
-      translateX(135vw)
-      translateY(8px)
-      rotate(8deg);
+    transform: translateX(130vw) translateY(8px) rotate(3deg);
   }
 }
 
-@keyframes move-snake-two {
+@keyframes move-top-bottom {
   0% {
-    transform:
-      translateX(0)
-      translateY(0)
-      rotate(-9deg);
-  }
-
-  25% {
-    transform:
-      translateX(32vw)
-      translateY(20px)
-      rotate(-3deg);
+    transform: translateY(0) rotate(2deg);
   }
 
   50% {
-    transform:
-      translateX(68vw)
-      translateY(-16px)
-      rotate(-10deg);
-  }
-
-  75% {
-    transform:
-      translateX(102vw)
-      translateY(14px)
-      rotate(-4deg);
+    transform: translateY(50vh) translateX(12px) rotate(-3deg);
   }
 
   100% {
-    transform:
-      translateX(140vw)
-      translateY(0)
-      rotate(-9deg);
+    transform: translateY(120vh) translateX(-8px) rotate(2deg);
   }
 }
 
-@keyframes move-snake-three {
+@keyframes move-bottom-top {
   0% {
-    transform:
-      translateX(0)
-      translateY(0)
-      rotate(5deg);
-  }
-
-  25% {
-    transform:
-      translateX(38vw)
-      translateY(-12px)
-      rotate(1deg);
+    transform: translateY(0) rotate(-3deg);
   }
 
   50% {
-    transform:
-      translateX(72vw)
-      translateY(15px)
-      rotate(7deg);
-  }
-
-  75% {
-    transform:
-      translateX(106vw)
-      translateY(-8px)
-      rotate(2deg);
+    transform: translateY(-45vh) translateX(-10px) rotate(2deg);
   }
 
   100% {
-    transform:
-      translateX(145vw)
-      translateY(6px)
-      rotate(5deg);
+    transform: translateY(-120vh) translateX(10px) rotate(-2deg);
+  }
+}
+
+@keyframes move-diagonal {
+  0% {
+    transform: translateX(0) translateY(0) rotate(8deg);
+  }
+
+  50% {
+    transform: translateX(55vw) translateY(-40px) rotate(2deg);
+  }
+
+  100% {
+    transform: translateX(125vw) translateY(-90px) rotate(8deg);
   }
 }
 
@@ -228,25 +138,45 @@
   min-height: 100vh;
   padding: 24px;
   box-sizing: border-box;
-  color: #f8fafc;
+  color: #1f2937;
 }
 
 h1 {
   margin: 0;
+  color: #166534;
   font-size: 2.8rem;
   line-height: 1;
-  color: #f0fdf4;
-  text-shadow:
-    0 3px 16px rgb(0 0 0 / 45%);
+  text-shadow: 0 2px 8px rgb(255 255 255 / 45%);
 }
 
 .score {
   margin: 0;
+  color: #2d6a4f;
   font-size: 1.55rem;
   font-weight: 700;
-  color: #bbf7d0;
-  text-shadow:
-    0 2px 10px rgb(0 0 0 / 35%);
+}
+
+.sound-button {
+  padding: 8px 14px;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 999px;
+  color: #1f2937;
+  background: rgb(255 255 255 / 82%);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 10%);
+  transition:
+    transform 0.15s ease,
+    background 0.2s ease;
+}
+
+.sound-button:hover {
+  background: #fff;
+}
+
+.sound-button:active {
+  transform: scale(0.96);
 }
 
 .board-wrapper {
@@ -260,14 +190,13 @@ canvas {
   display: block;
   width: 100%;
   height: 100%;
-  border: 3px solid rgb(255 255 255 / 12%);
+  border: 3px solid rgb(255 255 255 / 70%);
   border-radius: 16px;
   background: #020617;
   box-sizing: border-box;
   box-shadow:
-    0 18px 45px rgb(0 0 0 / 45%),
-    0 0 30px rgb(34 197 94 / 10%),
-    inset 0 0 0 1px rgb(255 255 255 / 5%);
+    0 16px 36px rgb(0 0 0 / 18%),
+    0 0 0 1px rgb(255 255 255 / 15%) inset;
   touch-action: none;
 }
 
@@ -279,38 +208,28 @@ canvas {
   justify-content: center;
   padding: 16px;
   border-radius: 16px;
-  background:
-    rgb(2 6 23 / 67%);
+  background: rgb(0 0 0 / 38%);
   box-sizing: border-box;
 }
 
 .game-over-box {
-  width:
-    min(
-      320px,
-      calc(100% - 24px)
-    );
+  width: min(320px, calc(100% - 24px));
   min-width: 0;
-  padding: 26px;
-  color: #fff;
+  padding: 24px;
+  color: #1f2937;
   text-align: center;
-  background:
-    rgb(15 23 42 / 92%);
-  border:
-    2px solid
-    rgb(255 255 255 / 16%);
+  background: rgb(255 255 255 / 92%);
+  border: 2px solid rgb(255 255 255 / 75%);
   border-radius: 18px;
   box-sizing: border-box;
-  box-shadow:
-    0 18px 44px
-    rgb(0 0 0 / 50%);
+  box-shadow: 0 18px 40px rgb(0 0 0 / 18%);
   backdrop-filter: blur(8px);
 }
 
 .game-over-box h2 {
   margin: 0 0 12px;
+  color: #166534;
   font-size: 2rem;
-  color: #f8fafc;
 }
 
 .game-over-box p {
@@ -343,30 +262,23 @@ canvas {
   cursor: pointer;
   transition:
     transform 0.15s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+    background 0.2s ease;
 }
 
 .restart-button {
-  background: #16a34a;
-  box-shadow:
-    0 8px 20px
-    rgb(22 163 74 / 25%);
+  background: #38b000;
 }
 
 .restart-button:hover {
-  background: #15803d;
+  background: #2d8f00;
 }
 
 .home-button {
-  background: #2563eb;
-  box-shadow:
-    0 8px 20px
-    rgb(37 99 235 / 25%);
+  background: #3a86ff;
 }
 
 .home-button:hover {
-  background: #1d4ed8;
+  background: #2f6ed1;
 }
 
 .restart-button:active,
@@ -375,30 +287,27 @@ canvas {
 }
 
 .save-status {
-  color: #fde68a;
+  color: #e09f3e;
   font-size: 0.95rem !important;
 }
 
 .save-success {
-  color: #86efac;
+  color: #38b000;
   font-size: 0.95rem !important;
 }
 
 .save-error {
-  color: #fca5a5;
+  color: #d62828;
   font-size: 0.95rem !important;
 }
 
 .instructions {
   max-width: 460px;
   margin: 0;
-  color: #cbd5e1;
+  color: #334155;
   font-size: 1.05rem;
   line-height: 1.45;
   text-align: center;
-  text-shadow:
-    0 2px 10px
-    rgb(0 0 0 / 30%);
 }
 
 .dpad {
@@ -418,15 +327,11 @@ canvas {
 .dpad-button {
   width: 58px;
   height: 58px;
-  border: 1px solid
-    rgb(255 255 255 / 9%);
+  border: 1px solid rgb(255 255 255 / 55%);
   border-radius: 13px;
-  color: #fff;
-  background:
-    rgb(15 23 42 / 88%);
-  box-shadow:
-    0 8px 20px
-    rgb(0 0 0 / 32%);
+  color: #1f2937;
+  background: rgb(255 255 255 / 82%);
+  box-shadow: 0 8px 18px rgb(0 0 0 / 12%);
   font-size: 1.45rem;
   line-height: 1;
   cursor: pointer;
@@ -437,21 +342,15 @@ canvas {
 }
 
 .dpad-button:hover {
-  background:
-    rgb(30 41 59 / 95%);
+  background: #f1f5f9;
 }
 
 .dpad-button:active {
-  background: #166534;
+  background: #d8f3dc;
   transform: scale(0.94);
 }
 
-@media (
-  max-width: 600px
-),
-(
-  pointer: coarse
-) {
+@media (max-width: 600px), (pointer: coarse) {
   .snake-container {
     gap: 10px;
     padding: 16px;
@@ -473,23 +372,14 @@ canvas {
     display: flex;
   }
 
-  .background-snake {
-    opacity: 0.09;
-  }
-
-  .background-snake span {
-    width: 18px;
-    height: 18px;
+  .bg-snake {
+    opacity: 0.22;
   }
 }
 
-@media (
-  max-width: 430px
-) {
+@media (max-width: 430px) {
   .snake-container {
-    padding:
-      12px 10px
-      18px;
+    padding: 12px 10px 18px;
   }
 
   .game-over-box {
@@ -517,14 +407,12 @@ canvas {
   }
 }
 
-@media (
-  prefers-reduced-motion:
-  reduce
-) {
-  .background-snake {
+@media (prefers-reduced-motion: reduce) {
+  .bg-snake {
     animation: none;
   }
 
+  .sound-button,
   .restart-button,
   .home-button,
   .dpad-button {

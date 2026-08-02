@@ -73,6 +73,7 @@ export class Snake implements AfterViewInit, OnDestroy {
   score = 0;
   gameOver = false;
   isExploding = false;
+  soundEnabled = true;
 
   savingScore = false;
   scoreSaved = false;
@@ -194,6 +195,10 @@ export class Snake implements AfterViewInit, OnDestroy {
 
   restart(): void {
     this.start();
+  }
+
+  toggleSound(): void {
+    this.soundEnabled = !this.soundEnabled;
   }
 
   move(
@@ -328,6 +333,8 @@ export class Snake implements AfterViewInit, OnDestroy {
     x: number,
     y: number
   ): void {
+    let directionChanged = false;
+
     if (
       x !== 0 &&
       this.direction.x === 0
@@ -337,10 +344,8 @@ export class Snake implements AfterViewInit, OnDestroy {
         y: 0,
       };
 
-      return;
-    }
-
-    if (
+      directionChanged = true;
+    } else if (
       y !== 0 &&
       this.direction.y === 0
     ) {
@@ -348,6 +353,12 @@ export class Snake implements AfterViewInit, OnDestroy {
         x: 0,
         y,
       };
+
+      directionChanged = true;
+    }
+
+    if (directionChanged) {
+      this.playMoveSound();
     }
   }
 
@@ -374,6 +385,7 @@ export class Snake implements AfterViewInit, OnDestroy {
       this.hasHitSnake(newHead)
     ) {
       this.stopGame();
+      this.playCrashSound();
       this.playExplosion(currentHead);
       return;
     }
@@ -382,6 +394,7 @@ export class Snake implements AfterViewInit, OnDestroy {
 
     if (this.isEatingFood(newHead)) {
       this.score += 10;
+      this.playEatSound();
       this.generateFood();
       this.changeDetector.detectChanges();
     } else {
@@ -526,6 +539,80 @@ export class Snake implements AfterViewInit, OnDestroy {
         );
       }
     );
+  }
+
+
+  private playTone(
+    frequency: number,
+    duration: number,
+    type: OscillatorType = 'sine',
+    volume = 0.1
+  ): void {
+    if (!this.soundEnabled) {
+      return;
+    }
+
+    const audioContext =
+      new AudioContext();
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    const gain =
+      audioContext.createGain();
+
+    oscillator.type = type;
+
+    oscillator.frequency.setValueAtTime(
+      frequency,
+      audioContext.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+      volume,
+      audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      audioContext.currentTime + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+      audioContext.currentTime + duration
+    );
+
+    oscillator.addEventListener(
+      'ended',
+      () => {
+        void audioContext.close();
+      }
+    );
+  }
+
+  private playEatSound(): void {
+    this.playTone(650, 0.1, 'sine', 0.12);
+
+    window.setTimeout(() => {
+      this.playTone(900, 0.09, 'sine', 0.1);
+    }, 70);
+  }
+
+  private playMoveSound(): void {
+    this.playTone(220, 0.035, 'square', 0.02);
+  }
+
+  private playCrashSound(): void {
+    this.playTone(130, 0.3, 'sawtooth', 0.14);
+
+    window.setTimeout(() => {
+      this.playTone(75, 0.4, 'sawtooth', 0.1);
+    }, 90);
   }
 
   private playExplosion(
