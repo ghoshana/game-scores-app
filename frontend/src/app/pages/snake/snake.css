@@ -53,6 +53,13 @@
   stroke-width: 11;
   stroke-linecap: round;
   stroke-dasharray: 1 15;
+  animation: scale-flow 1.4s linear infinite;
+}
+
+@keyframes scale-flow {
+  to {
+    stroke-dashoffset: -32; /* 2 × (1 + 15) so the loop is seamless */
+  }
 }
 
 .bg-snake .snake-head-shape {
@@ -434,6 +441,10 @@ canvas {
 
 @media (prefers-reduced-motion: reduce) {
   .bg-snake {
+    animation: none;
+  }
+
+  .bg-snake .snake-scales {
     animation: none;
   }
 
