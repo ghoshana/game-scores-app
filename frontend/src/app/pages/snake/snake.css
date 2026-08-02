@@ -53,13 +53,7 @@
   stroke-width: 11;
   stroke-linecap: round;
   stroke-dasharray: 1 15;
-  animation: scale-flow 1.4s linear infinite;
-}
-
-@keyframes scale-flow {
-  to {
-    stroke-dashoffset: -32; /* 2 × (1 + 15) so the loop is seamless */
-  }
+  /* the animated body path handles the wave motion now */
 }
 
 .bg-snake .snake-head-shape {
@@ -73,6 +67,27 @@
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: 20;
+  animation: tongue-flick 2s ease-in-out infinite;
+}
+
+@keyframes tongue-flick {
+  0%, 55% {
+    stroke-dashoffset: 20; /* retracted / hidden */
+    opacity: 0;
+  }
+  65% {
+    stroke-dashoffset: 0; /* extended and forked */
+    opacity: 1;
+  }
+  80% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  90%, 100% {
+    stroke-dashoffset: 20; /* pulled back in */
+    opacity: 0;
+  }
 }
 
 .bg-snake .eye-white { fill: #f8fafc; }
@@ -444,8 +459,9 @@ canvas {
     animation: none;
   }
 
-  .bg-snake .snake-scales {
+  .bg-snake .snake-tongue {
     animation: none;
+    opacity: 1;
   }
 
   .sound-button,
