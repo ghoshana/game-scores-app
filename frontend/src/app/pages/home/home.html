@@ -1,147 +1,25 @@
-<div class="home-page">
-  <div class="home-background" aria-hidden="true">
-    <div class="snake-decoration snake-one">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
+<div style="max-width:400px; margin:60px auto; font-family:sans-serif; text-align:center;">
+  <h1>Game Scores</h1>
+
+  @if (username) {
+    <p>Welcome back, <strong>{{ username }}</strong>!</p>
+
+    <div style="margin:20px 0; padding:16px; border:1px solid #ddd; border-radius:8px;">
+      <h3>Your Best Scores</h3>
+      <p>🐍 Snake: <strong>{{ scores.snake || 0 }}</strong></p>
+      <p>🧱 Tetris: <strong>{{ scores.tetris || 0 }}</strong></p>
     </div>
 
-    <div class="snake-decoration snake-two">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-
-    <div class="tetris-piece piece-one">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-
-    <div class="tetris-piece piece-two">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-
-  <main class="home-container">
-    <header class="home-header">
-      <p class="eyebrow">Mini Arcade</p>
-
-      <h1>Game Scores</h1>
-
-      @if (username) {
-        <p class="welcome">
-          Welcome back,
-          <strong>{{ username }}</strong>!
-        </p>
-      } @else {
-        <p class="welcome">
-          Play, compete, and save your best scores.
-        </p>
-      }
-    </header>
-
-    @if (username) {
-      <section class="game-grid">
-        <a
-          routerLink="/snake"
-          class="game-card snake-card"
-        >
-          <div class="game-card-icon">
-            🐍
-          </div>
-
-          <div class="game-card-content">
-            <p class="game-card-label">
-              Classic Game
-            </p>
-
-            <h2>Snake</h2>
-
-            <p class="game-card-description">
-              Grow your snake, collect food, and avoid the walls.
-            </p>
-
-            <div class="score-row">
-              <span>Best score</span>
-              <strong>{{ scores.snake || 0 }}</strong>
-            </div>
-          </div>
-
-          <span class="play-label">
-            Play Snake →
-          </span>
-        </a>
-
-        <a
-          routerLink="/tetris"
-          class="game-card tetris-card"
-        >
-          <div class="game-card-icon">
-            🧱
-          </div>
-
-          <div class="game-card-content">
-            <p class="game-card-label">
-              Arcade Puzzle
-            </p>
-
-            <h2>Tetris</h2>
-
-            <p class="game-card-description">
-              Arrange the falling blocks and clear complete rows.
-            </p>
-
-            <div class="score-row">
-              <span>Best score</span>
-              <strong>{{ scores.tetris || 0 }}</strong>
-            </div>
-          </div>
-
-          <span class="play-label">
-            Play Tetris →
-          </span>
-        </a>
-      </section>
-
-      <button
-        type="button"
-        class="logout-button"
-        (click)="logout()"
-      >
-        Log out
-      </button>
-    } @else {
-      <section class="guest-card">
-        <h2>Start Playing</h2>
-
-        <p>
-          Log in to play both games and save your best scores.
-        </p>
-
-        <div class="auth-actions">
-          <a
-            routerLink="/login"
-            class="primary-button"
-          >
-            Login
-          </a>
-
-          <a
-            routerLink="/register"
-            class="secondary-button"
-          >
-            Register
-          </a>
-        </div>
-      </section>
-    }
-  </main>
+    <p>
+      <a routerLink="/snake">Play Snake</a> &nbsp;|&nbsp;
+      <a routerLink="/tetris">Play Tetris</a>
+    </p>
+    <p><a href="javascript:void(0)" (click)="logout()">Log out</a></p>
+  } @else {
+    <p>Please log in to play and save your best scores.</p>
+    <p>
+      <a routerLink="/login">Login</a> &nbsp;|&nbsp;
+      <a routerLink="/register">Register</a>
+    </p>
+  }
 </div>
