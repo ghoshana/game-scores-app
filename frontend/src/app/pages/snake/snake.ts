@@ -12,6 +12,7 @@ import {
   HttpClient,
   HttpHeaders,
 } from '@angular/common/http';
+import { AnalyticsService } from '../../analytics/analytics.service';
 
 interface Position {
   x: number;
@@ -70,6 +71,8 @@ export class Snake implements AfterViewInit, OnDestroy {
   private touchStartX = 0;
   private touchStartY = 0;
 
+  private gameStartTime = 0;
+
   score = 0;
   gameOver = false;
   isExploding = false;
@@ -81,10 +84,13 @@ export class Snake implements AfterViewInit, OnDestroy {
 
   constructor(
     private changeDetector: ChangeDetectorRef,
-    private http: HttpClient
+    private http: HttpClient,
+    private analytics: AnalyticsService
   ) {}
 
   ngAfterViewInit(): void {
+    this.analytics.track({ type: 'page_view', path: '/snake' });
+
     const context =
       this.board.nativeElement.getContext('2d');
 
@@ -182,6 +188,9 @@ export class Snake implements AfterViewInit, OnDestroy {
     this.savingScore = false;
     this.scoreSaved = false;
     this.scoreSaveError = '';
+
+    this.gameStartTime = Date.now();
+    this.analytics.track({ type: 'game_started', game: 'snake' });
 
     this.generateFood();
     this.draw();
@@ -384,6 +393,16 @@ export class Snake implements AfterViewInit, OnDestroy {
       this.hasHitWall(newHead) ||
       this.hasHitSnake(newHead)
     ) {
+      const cause = this.hasHitWall(newHead) ? 'wall' : 'self';
+
+      this.analytics.track({
+        type: 'game_ended',
+        game: 'snake',
+        score: this.score,
+        durationMs: Date.now() - this.gameStartTime,
+        cause,
+      });
+
       this.stopGame();
       this.playCrashSound();
       this.playExplosion(currentHead);
@@ -540,7 +559,6 @@ export class Snake implements AfterViewInit, OnDestroy {
       }
     );
   }
-
 
   private playTone(
     frequency: number,
@@ -795,11 +813,14 @@ export class Snake implements AfterViewInit, OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.scoreSaved =
-            true;
+          this.scoreSaved = true;
+          this.savingScore = false;
 
-          this.savingScore =
-            false;
+          this.analytics.track({
+            type: 'score_saved',
+            game: 'snake',
+            score: this.score,
+          });
 
           console.log(
             'Snake score saved successfully.'
