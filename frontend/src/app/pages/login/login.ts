@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AnalyticsService } from '../../analytics/analytics.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,11 @@ export class Login {
   password = '';
   message = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private analytics: AnalyticsService
+  ) {}
 
   onLogin() {
     this.http.post('https://game-scores-app.onrender.com/api/auth/login', {
@@ -25,6 +30,11 @@ export class Login {
       next: (res: any) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('username', res.username);
+
+        // Tie all future events to this user, then record the login.
+        this.analytics.identify(res.username);
+        this.analytics.track({ type: 'login', method: 'password' });
+
         this.router.navigate(['/']);
       },
       error: (err) => {

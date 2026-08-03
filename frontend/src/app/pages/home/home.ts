@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { AnalyticsService } from '../../analytics/analytics.service';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,11 @@ export class Home implements OnInit {
   username = '';
   scores: any = {};
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private analytics: AnalyticsService
+  ) {}
 
   ngOnInit() {
     this.username = localStorage.getItem('username') || '';
@@ -33,6 +38,11 @@ export class Home implements OnInit {
     localStorage.removeItem('username');
     this.username = '';
     this.scores = {};
+
+    // Clear the analytics identity so later events aren't
+    // attributed to the user who just logged out.
+    this.analytics.reset();
+
     this.cdr.detectChanges();
   }
 }
