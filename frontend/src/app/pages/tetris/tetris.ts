@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-
+import { AnalyticsService } from '../../analytics/analytics.service';
 interface Tetromino {
   shape: number[][];
   color: number;
@@ -44,6 +44,8 @@ export class Tetris implements AfterViewInit, OnDestroy {
 
   score = 0;
   gameOver = false;
+
+  private gameStartTime = 0;
 
   private readonly colors = [
     '#000000',
@@ -97,9 +99,16 @@ export class Tetris implements AfterViewInit, OnDestroy {
     ],
   ];
 
- constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {}
+ 
+ constructor(
+    private cdr: ChangeDetectorRef,
+    private http: HttpClient,
+    private analytics: AnalyticsService
+  ) {}
 
   ngAfterViewInit(): void {
+    this.analytics.track({ type: 'page_view', path: '/tetris' });
+
     const context = this.board.nativeElement.getContext('2d');
 
     if (!context) {
@@ -128,8 +137,12 @@ export class Tetris implements AfterViewInit, OnDestroy {
 
     this.score = 0;
     this.gameOver = false;
+  
+    this.gameStartTime = Date.now();
+    this.analytics.track({ type: 'game_started', game: 'tetris' });
 
     this.spawnPiece();
+
     this.draw();
 
     this.cdr.detectChanges();
@@ -163,17 +176,26 @@ export class Tetris implements AfterViewInit, OnDestroy {
     };
 
     if (
-      this.collides(
-        this.current.shape,
-        this.current.x,
-        this.current.y
-      )
-    ) {
-      this.gameOver = true;
-      this.saveScore();
-      clearInterval(this.loop);
-      this.cdr.detectChanges();
-    }
+          this.collides(
+            this.current.shape,
+            this.current.x,
+            this.current.y
+          )
+        ) {
+          this.gameOver = true;
+
+          this.analytics.track({
+            type: 'game_ended',
+            game: 'tetris',
+            score: this.score,
+            durationMs: Date.now() - this.gameStartTime,
+            cause: 'stack_full',
+          });
+
+          this.saveScore();
+          clearInterval(this.loop);
+          this.cdr.detectChanges();
+        }
     
   }
 
@@ -547,7 +569,14 @@ export class Tetris implements AfterViewInit, OnDestroy {
       { game: 'tetris', score: this.score },
       { headers: { Authorization: `Bearer ${token}` } }
     ).subscribe({
-      next: () => console.log('Tetris score saved successfully.'),
+      next: () => {
+        this.analytics.track({
+          type: 'score_saved',
+          game: 'tetris',
+          score: this.score,
+        });
+        console.log('Tetris score saved successfully.');
+      },
       error: (err) => console.error('Error saving Tetris score:', err),
     });
   }
